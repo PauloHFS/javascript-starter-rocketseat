@@ -7,7 +7,8 @@ repos = [];
 btnElement.onclick = function () {
     var githubUser = inputElement.value;
     inputElement.value = "";
-
+    
+    renderCarregamento();
     axios.get('https://api.github.com/users/' + githubUser + '/repos')
         .then(function (response) {
 
@@ -18,11 +19,13 @@ btnElement.onclick = function () {
             renderRepos();
         })
         .catch(function (error) {
-            console.log(error);
+            renderError(error.response.status, error.response.statusText);
         });
 }
 
 function renderRepos() {
+    listRepoElement.innerHTML = "";
+
     for (repo of repos) {
         var liElement = document.createElement("li");
         var liTextElement = document.createTextNode(repo);
@@ -30,4 +33,26 @@ function renderRepos() {
         liElement.appendChild(liTextElement);
         listRepoElement.appendChild(liElement);
     }
+    repos = [];
+}
+
+function renderCarregamento() {
+    listRepoElement.innerHTML = "";
+
+    var liElement = document.createElement("li");
+    var liTextElement = document.createTextNode("Carregando...");
+    
+    liElement.appendChild(liTextElement);
+    listRepoElement.appendChild(liElement);
+}
+
+function renderError(status, statusText) {
+    listRepoElement.innerHTML = "";
+
+    var liElement = document.createElement("li");
+    var liTextElement = document.createTextNode(status +': '+ statusText);
+
+    liElement.appendChild(liTextElement);
+
+    listRepoElement.appendChild(liElement);
 }
